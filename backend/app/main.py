@@ -20,7 +20,11 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=[
+        "https://razach.github.io",      # GitHub Pages
+        "http://localhost:8000",         # Local dev
+        "http://127.0.0.1:8000"          # Local dev (127.0.0.1)
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
