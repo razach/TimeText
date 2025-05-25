@@ -3,6 +3,8 @@ import pytz
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from app.core.config import settings
+from app.schemas.availability import TimeSlot
 
 client = TestClient(app)
 
@@ -37,7 +39,13 @@ def test_root_endpoint():
     assert "docs_url" in data
 
 def test_generate_availability_continuous(sample_request_data):
-    response = client.post("/api/v1/availability/generate", json=sample_request_data)
+    response = client.post(
+        "/api/v1/availability",
+        json=sample_request_data,
+        headers={"X-API-Key": settings.API_KEY}
+    )
+    if response.status_code != 200:
+        print(f"Error response: {response.json()}")
     assert response.status_code == 200
     data = response.json()
     assert "text_output" in data
@@ -48,7 +56,13 @@ def test_generate_availability_continuous(sample_request_data):
 
 def test_generate_availability_chunks(sample_request_data):
     sample_request_data["output_format"] = "chunks"
-    response = client.post("/api/v1/availability/generate", json=sample_request_data)
+    response = client.post(
+        "/api/v1/availability",
+        json=sample_request_data,
+        headers={"X-API-Key": settings.API_KEY}
+    )
+    if response.status_code != 200:
+        print(f"Error response: {response.json()}")
     assert response.status_code == 200
     data = response.json()
     assert "text_output" in data
@@ -56,22 +70,37 @@ def test_generate_availability_chunks(sample_request_data):
     assert "9:30 AM" in data["text_output"]
 
 def test_invalid_timezone():
+    ny_tz = pytz.timezone('America/New_York')
+    base_time = ny_tz.localize(datetime(2024, 3, 20, 9, 0))
+    
     invalid_data = {
         "selected_slots": [
             {
-                "start": "2024-03-20T09:00:00-04:00",
-                "end": "2024-03-20T11:00:00-04:00"
+                "start": base_time.isoformat(),
+                "end": (base_time + timedelta(hours=2)).isoformat()
             }
         ],
         "user_timezone": "Invalid/Timezone",
         "output_format": "continuous"
     }
-    response = client.post("/api/v1/availability/generate", json=invalid_data)
+    response = client.post(
+        "/api/v1/availability",
+        json=invalid_data,
+        headers={"X-API-Key": settings.API_KEY}
+    )
+    if response.status_code != 400:
+        print(f"Error response: {response.json()}")
     assert response.status_code == 400
     assert "Invalid timezone" in response.json()["detail"]
 
 def test_invalid_output_format(sample_request_data):
     sample_request_data["output_format"] = "invalid_format"
-    response = client.post("/api/v1/availability/generate", json=sample_request_data)
+    response = client.post(
+        "/api/v1/availability",
+        json=sample_request_data,
+        headers={"X-API-Key": settings.API_KEY}
+    )
+    if response.status_code != 400:
+        print(f"Error response: {response.json()}")
     assert response.status_code == 400
     assert "Invalid output_format" in response.json()["detail"] 

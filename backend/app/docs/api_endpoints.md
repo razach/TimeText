@@ -12,6 +12,8 @@
 
 - **URL:** `/availability/generate`
 - **Method:** `POST`
+- **Headers:**
+  - `X-API-Key`: Required. The API key for authentication.
 - **Request Body:**
 
 ```
@@ -45,6 +47,11 @@
     ```json
     { "detail": "Descriptive error message" }
     ```
+    - **Status:** `401 Unauthorized`
+    - **Body:**
+    ```json
+    { "detail": "Invalid API key" }
+    ```
     - **Status:** `500 Internal Server Error`
     - **Body:**
     ```json
@@ -69,6 +76,10 @@
       "slot_granularity_minutes": 30
     }
     ```
+- **Headers:**
+    ```
+    X-API-Key: your-api-key-here
+    ```
 - **Expected Response:**
     - Status: 200
     - `text_output` contains both timezones and both dates.
@@ -86,6 +97,10 @@
       "slot_granularity_minutes": 30
     }
     ```
+- **Headers:**
+    ```
+    X-API-Key: your-api-key-here
+    ```
 - **Expected Response:**
     - Status: 200
     - `text_output` contains 30-minute intervals for the slot.
@@ -100,6 +115,10 @@
       "user_timezone": "Invalid/Timezone",
       "output_format": "continuous"
     }
+    ```
+- **Headers:**
+    ```
+    X-API-Key: your-api-key-here
     ```
 - **Expected Response:**
     - Status: 400
@@ -116,6 +135,10 @@
       "output_format": "invalid_format"
     }
     ```
+- **Headers:**
+    ```
+    X-API-Key: your-api-key-here
+    ```
 - **Expected Response:**
     - Status: 400
     - `detail` contains "Invalid output_format"
@@ -130,6 +153,10 @@
       "user_timezone": "America/New_York",
       "output_format": "continuous"
     }
+    ```
+- **Headers:**
+    ```
+    X-API-Key: your-api-key-here
     ```
 - **Expected Response:**
     - Status: 400

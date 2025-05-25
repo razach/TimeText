@@ -12,12 +12,12 @@ def sample_time_slots():
     
     return [
         TimeSlot(
-            start=base_time,
-            end=base_time + timedelta(hours=2)
+            start=base_time.isoformat(),
+            end=(base_time + timedelta(hours=2)).isoformat()
         ),
         TimeSlot(
-            start=base_time + timedelta(days=1),
-            end=base_time + timedelta(days=1, hours=1)
+            start=(base_time + timedelta(days=1)).isoformat(),
+            end=(base_time + timedelta(days=1, hours=1)).isoformat()
         )
     ]
 

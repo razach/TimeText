@@ -1,10 +1,18 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 class TimeSlot(BaseModel):
-    start: datetime = Field(..., description="Start time of the availability slot")
-    end: datetime = Field(..., description="End time of the availability slot")
+    start: str = Field(..., description="Start time of the availability slot in ISO format")
+    end: str = Field(..., description="End time of the availability slot in ISO format")
+
+    @field_validator('start', 'end')
+    @classmethod
+    def validate_datetime(cls, v: str) -> datetime:
+        try:
+            return datetime.fromisoformat(v)
+        except ValueError:
+            raise ValueError("Invalid datetime format. Must be in ISO format.")
 
 class AvailabilityRequest(BaseModel):
     selected_slots: List[TimeSlot] = Field(..., description="List of selected time slots")
