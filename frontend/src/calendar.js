@@ -44,8 +44,28 @@ class Calendar {
                     slotDuration: '00:30:00',
                     slotLabelInterval: '01:00'
                 }
+            },
+            // Add touch support
+            longPressDelay: 100,
+            selectLongPressDelay: 100,
+            eventLongPressDelay: 100,
+            // Improve mobile interaction
+            handleWindowResize: true,
+            stickyHeaderDates: true,
+            // Optimize for mobile
+            expandRows: true,
+            nowIndicator: true,
+            // Improve touch selection
+            selectConstraint: {
+                startTime: '08:00',
+                endTime: '20:00',
             }
         });
+
+        // Add touch event listeners for better mobile support
+        calendarEl.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+        calendarEl.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
+        calendarEl.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
 
         this.calendar.render();
     }
@@ -142,6 +162,27 @@ class Calendar {
         this.selectedSlots = [];
         this.calendar.removeAllEvents();
         this.updateTextOutput();
+    }
+
+    // Add touch handling methods
+    handleTouchStart(e) {
+        this.touchStartY = e.touches[0].clientY;
+    }
+
+    handleTouchMove(e) {
+        if (!this.touchStartY) return;
+        
+        const touchY = e.touches[0].clientY;
+        const diff = this.touchStartY - touchY;
+        
+        // Prevent default only if we're actually selecting
+        if (Math.abs(diff) > 10) {
+            e.preventDefault();
+        }
+    }
+
+    handleTouchEnd() {
+        this.touchStartY = null;
     }
 }
 
