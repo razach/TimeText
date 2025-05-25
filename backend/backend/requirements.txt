@@ -15,7 +15,4 @@ flake8==7.0.0  # Linting
 isort==5.13.2  # Import sorting
 
 # Settings management
-pydantic-settings==2.9.1
-
-# Added from the code block
-requests==2.31.0 
+pydantic-settings==2.9.1 
